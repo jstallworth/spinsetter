@@ -12,7 +12,18 @@
    *  results -- an array of search results
    */
   SearchModel.search = function(query, callback) {
-    // TODO
+    var request = new XMLHttpRequest();
+    request.addEventListener('load', function() {
+      var error = null;
+      if (this.status != 200) {
+        error = this.statusText;
+      }
+      var response = this.response;
+      callback(error, JSON.parse(response));
+    });
+    request.open("GET", SEARCH_URL + "?query=" + encodeURIComponent(query));
+    request.setRequestHeader('Content-type', 'application/json');
+    request.send();
   };
 
   window.SearchModel = SearchModel;
