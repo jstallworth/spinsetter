@@ -19,20 +19,20 @@
 
   /* Given post information, renders a post element into $newsfeed. */
   NewsfeedView.renderPost = function($newsfeed, post, updateMasonry) {
-    // TODO
     var postDiv = Templates.renderPost(post);
     $post = $(postDiv);
     $newsfeed.prepend($post);
     $post.find(".remove").click(function() {
+      $newsfeed.masonry('remove', $(this).parent().parent().parent().get(0)); //remove the clicked post
+      $newsfeed.masonry();
       PostModel.remove(post._id, function(error,result) {
-        $newsfeed.masonry('remove', $post);
-        $newsfeed.masonry();
+        if(error) $(".error").html(error);
       });
     });
     $post.find(".upvote").click(function() {
+      $(this).find(".upvote-count").html(parseInt($(this).find(".upvote-count").html()) + 1); // increment the clicked post's count
       PostModel.upvote(post._id, function(error,result) {
-        $post.find(".upvote-count").html(parseInt($post.find(".upvote-count").html()) + 1);
-        console.log(error);
+        if(error) $(".error").html(error);
       });
     });
     if (updateMasonry) {

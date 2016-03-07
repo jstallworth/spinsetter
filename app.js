@@ -18,26 +18,32 @@ var flickr = require('./lib/flickr.js');
 
 var Post = require('./lib/post.js');
 
-// TODO: api routes
+// api routes
 app.get('/search', function (req, res) {
   var searchResults = [];
   var query = req.query.query;
   var count = 0;
   soundcloud.search(query, function(error,results) { 
-    results[0].api = "soundcloud";
-    searchResults.push(results[0]);
+    if(results.length > 0) {
+      results[0].api = "soundcloud";
+      searchResults.push(results[0]);
+    }
     count++;
     if(count == 3) res.json(200, searchResults);
   });
   youtube.search(query, function(error,results) { 
-    results[0].api = "youtube";
-    searchResults.push(results[0]);
+    if(results.length > 0) {
+      results[0].api = "youtube";
+      searchResults.push(results[0]);
+    }
     count++;
     if(count == 3) res.json(200, searchResults);
   });
   flickr.search(query, function(error,results) { 
-    results[0].api = "flickr";
-    searchResults.push(results[0]);
+    if(results.length > 0) {
+      results[0].api = "flickr";
+      searchResults.push(results[0]);
+    }
     count++;
     if(count == 3) res.json(200, searchResults);
   });
@@ -64,7 +70,7 @@ app.post('/posts', function(req, res) {
           upvotes: 0
         });
 
-        // save the person to Mongo
+        // save the post to Mongo
         post.save(function(error) {
           if (error) {
             throw error;
@@ -96,7 +102,7 @@ app.post('/posts/upvote', function(req, res) {
     }
     post.upvotes = post.upvotes + 1;
 
-    // write these changes to the database
+    // save post to the database
     post.save(function(error) {
       if (error) {
         throw error;

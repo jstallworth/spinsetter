@@ -15,10 +15,10 @@
     var request = new XMLHttpRequest();
     request.addEventListener('load', function() {
       var error = null;
-      if (this.status != 200) {
-        error = this.statusText;
+      if (request.status != 200) {
+        error = request.statusText;
       }
-      var response = this.response;
+      var response = request.response;
       callback(error, JSON.parse(response));
     });
     request.open("GET", SEARCH_URL + "?query=" + encodeURIComponent(query));

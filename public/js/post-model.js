@@ -16,10 +16,10 @@
     var request = new XMLHttpRequest();
     request.addEventListener('load', function() {
       var error = null;
-      if (this.status != 200) {
-        error = this.statusText;
+      if (request.status != 200) {
+        error = request.statusText;
       }
-      var response = this.response;
+      var response = request.response;
       callback(error, JSON.parse(response));
     });
     request.open("GET", POSTS_URL);
@@ -38,10 +38,10 @@
     var request = new XMLHttpRequest();
     request.addEventListener('load', function() {
       var error = null;
-      if (this.status != 200) {
-        error = this.statusText;
+      if (request.status != 200) {
+        error = request.statusText;
       }
-      var response = this.response;
+      var response = request.response;
       callback(error, JSON.parse(response));
     });
     request.open("POST", POSTS_URL);
@@ -59,16 +59,17 @@
     var request = new XMLHttpRequest();
     request.addEventListener('load', function() {
       var error = null;
-      if (this.status != 200) {
-        error = this.statusText;
+      if (request.status != 200) {
+        error = request.statusText;
       }
-      var response = this.response;
+      var response = request.response;
       callback(error, response);
     });
     request.open("POST", POSTS_URL + "/remove");
     request.setRequestHeader('Content-type', 'application/json');
-    var idObj = {};
-    idObj.id = id;
+    var idObj = {
+      id: id
+    };
     request.send(JSON.stringify(idObj));
   };
 
@@ -82,16 +83,17 @@
     var request = new XMLHttpRequest();
     request.addEventListener('load', function() {
       var error = null;
-      if (this.status != 200) {
-        error = this.statusText;
+      if (request.status != 200) {
+        error = request.statusText;
       }
-      var response = this.response;
+      var response = request.response;
       callback(error, JSON.parse(response));
     });
     request.open("POST", POSTS_URL + "/upvote");
     request.setRequestHeader('Content-type', 'application/json');
-    var idObj = {};
-    idObj.id = id;
+    var idObj = {
+      id: id
+    };
     request.send(JSON.stringify(idObj));
   };
 
