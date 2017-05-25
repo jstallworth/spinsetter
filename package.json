@@ -1,5 +1,5 @@
 {
-  "name": "callback-newsfeed",
+  "name": "spinsetter",
   "version": "0.0.1",
   "engines": {
     "node": ">= 0.6.19",
@@ -9,6 +9,7 @@
     "body-parser": "1.14.1",
     "express": "4.13.3",
     "mongoose": "3.8.19",
+    "node-soundcloud": "0.0.5",
     "nodemon": "^1.9.1",
     "request": "2.67.0"
   }

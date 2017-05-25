@@ -1,117 +1,51 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var Twitter = require('twitter');
 
-// connect to database
-mongoose.connect('mongodb://localhost:27017/callback-newsfeed-db');
+
+
+//Authenticate with Twitter
+var client = new Twitter({
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.AUTH_TOKEN,
+  access_token_secret: process.env.AUTH_TOKEN_SECRET,
+});
+
 
 var app = express();
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
+//make sure the tweet has a soundcloud link in it
+function validateTweet(tweet) {
+  var containsSC = new RegExp(/\/soundcloud.com\/([a-zA-Z0-9_-])+\/([a-zA-Z0-9_-])+/);
+  if(!tweet.entities || !tweet.entities.urls[0]) return false;
+  return containsSC.test(tweet.entities.urls[0].expanded_url);
+}
+
 // serve all files out of public folder
 app.use(express.static('public'));
+
+//stream all of the tweets
+app.get('/tweets', function (req, res) {
+  var tweets = client.stream('statuses/filter', {track: 'soundcloud',location: req.location} , function(stream) {
+      stream.on('data',function(tweet) {
+        if(validateTweet(tweet)) io.sockets.emit('stream',tweet);
+      });
+      stream.on('error',function(error) {
+        console.log(error + '');
+      });
+    });
+  res.send('ya');
+  
+});
 
 // parse json bodies in post requests
 app.use(bodyParser.json());
 
-var soundcloud = require('./lib/soundcloud.js');
-var youtube = require('./lib/youtube.js');
-var flickr = require('./lib/flickr.js');
 
-var Post = require('./lib/post.js');
-
-// api routes
-app.get('/search', function (req, res) {
-  var searchResults = [];
-  var query = req.query.query;
-  var count = 0;
-  soundcloud.search(query, function(error,results) { 
-    if(results.length > 0) {
-      results[0].api = "soundcloud";
-      searchResults.push(results[0]);
-    }
-    count++;
-    if(count == 3) res.json(200, searchResults);
-  });
-  youtube.search(query, function(error,results) { 
-    if(results.length > 0) {
-      results[0].api = "youtube";
-      searchResults.push(results[0]);
-    }
-    count++;
-    if(count == 3) res.json(200, searchResults);
-  });
-  flickr.search(query, function(error,results) { 
-    if(results.length > 0) {
-      results[0].api = "flickr";
-      searchResults.push(results[0]);
-    }
-    count++;
-    if(count == 3) res.json(200, searchResults);
-  });
-});
-
-app.get('/posts', function (req, res) {
-  Post.find(function(error,  posts) {
-    if (error) {
-      throw error;
-    }
-    res.send(JSON.stringify(posts));
-  });
-});
-
-app.post('/posts', function(req, res) {
-    var api = req.body.api;
-    var source = req.body.source;
-    var title = req.body.title;
-    if(api && source && title) {
-        var post = new Post({
-          title: title,
-          api: api,
-          source: source,
-          upvotes: 0
-        });
-
-        // save the post to Mongo
-        post.save(function(error) {
-          if (error) {
-            throw error;
-          }
-          res.send(JSON.stringify(post));
-        });
-    } else {
-      res.status(422);
-      var error = "Not enough parameters";
-      res.send(error);
-    }
-});
-
-app.post('/posts/remove', function(req, res) {
-  var id = req.body.id;
-  Post.findByIdAndRemove(id, function(error) {
-    if (error) {
-      throw error;
-    }
-    res.send();
-  });
-});
-
-app.post('/posts/upvote', function(req, res) {
-  var id = req.body.id;
-  Post.findById(id, function(error,post) {
-    if (error) {
-      throw error;
-    }
-    post.upvotes = post.upvotes + 1;
-
-    // save post to the database
-    post.save(function(error) {
-      if (error) {
-        throw error;
-      }
-      res.send(JSON.stringify(post));
-    });
-  });
-});
-
-
-app.listen(3000);
+server.listen(3000);
 console.log('Listening at 127.0.0.1:' + 3000);

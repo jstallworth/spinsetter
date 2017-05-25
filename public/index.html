@@ -2,57 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Callback Newsfeed</title>
-
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Parisienne|Cabin">
+    <title>Spinsetter</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,600" rel="stylesheet">
     <link rel="stylesheet" href="/css/normalize.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/style.css">
   </head>
 
   <body>
-    <header>
-      <div class="container">
-        <h1>
-          <i class="fa fa-newspaper-o"></i>
-          Callback Newsfeed
-        </h1>
+      <div id="nav-bar">
+        <a href="/" class="homelink"><img src="images/spin-logo.svg" class="spinlogo"/></a>
+        <div id="controlbox">
+              <i id="prev" class="menu-link fa fa-backward"></i>
+              <input id="dial" class="menu-link" />
+              <i id="play" class="menu-link fa fa-play"></i>
+              <i id="pause" class="menu-link fa fa-pause"></i>
+              <i id="next" class="menu-link fa fa-forward"></i>
+        </div>
+        <i data-url="/welcome/layout.html.erb" class="menu-link menu-search fa fa-search"></i>
 
-        <form id="search">
-          <div id="search-bar">
-            <input type="text" name="query" autocomplete="off"
-              placeholder="Post music, videos, or photos by searching" />
-
-            <img src="/images/loading.gif" alt="Loading" class="loading-icon">
-            <button type="submit">
-              <i class="fa fa-search"></i>
-            </button>
-          </div>
-
-          <div id="search-results"></div>
-        </form>
       </div>
-    </header>
 
     <div class="error"></div>
-    <div id="newsfeed"></div>
+    <div id="newsfeed"><div id="wrap"></div></div>
 
     <!-- Libraries -->
+    <script src="/socket.io/socket.io.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/masonry.min.js"></script>
     <script src="/js/imagesloaded.min.js"></script>
-
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
     <!-- Models -->
-    <script src="/js/post-model.js"></script>
-    <script src="/js/search-model.js"></script>
+    <script src="/js/songs-model.js"></script>
 
-    <!-- Templates -->
-    <script src="/js/templates.js"></script>
 
     <!-- Views -->
     <script src="/js/main-view.js"></script>
-    <script src="/js/search-view.js"></script>
-    <script src="/js/newsfeed-view.js"></script>
 
     <!-- Main -->
     <script src="/js/main.js"></script>

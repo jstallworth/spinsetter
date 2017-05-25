@@ -3,8 +3,11 @@
   var MainView = {};
 
   MainView.render = function($body) {
-    NewsfeedView.render($body.find('#newsfeed'));
-    SearchView.render($body.find('#search'));
+    SongStream.streamTweets("-122.75,36.8,-121.75,37.8", function(tweet) {  
+      
+    });
+    $('#next').click(SongStream.next);
+    $('#prev').click(SongStream.prev);
   };
 
   window.MainView = MainView;
